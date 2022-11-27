@@ -1,0 +1,51 @@
+<head>
+  <style> body { margin: 0; } </style>
+
+  <script src="//unpkg.com/react/umd/react.production.min.js"></script>
+  <script src="//unpkg.com/react-dom/umd/react-dom.production.min.js"></script>
+  <script src="//unpkg.com/babel-standalone"></script>
+
+  <script src="//unpkg.com/three"></script>
+  <script src="//unpkg.com/three-spritetext"></script>
+
+  <script src="//unpkg.com/react-force-graph-3d"></script>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+
+
+  <!--<script src="../../src/packages/react-force-graph-3d/dist/react-force-graph-3d.js"></script>-->
+</head>
+
+<body>
+  <div id="graph"></div>
+  <script type="text/jsx">
+
+    fetch('graph.json').then(res => res.json()).then(data => {
+
+      console.log([Math.min(...data.links.map(o => o.value)),Math.max(...data.links.map(o => o.value))])
+
+      var colorScale = d3.scaleLinear()
+      .domain([Math.min(...data.links.map(o => o.value)),Math.max(...data.links.map(o => o.value))])
+      .range([Math.min(...data.links.map(o => o.value)),Math.max(...data.links.map(o => o.value))])
+
+      ReactDOM.render(
+        <ForceGraph3D
+          graphData={data}
+          nodeAutoColorBy="group"
+          linkWidth = {"value"}
+          //linkColor = "green"
+          linkAutoColorBy	 = {"value"}
+          //linkColor = {"d3.interpolateViridis(colorScale(value)))"}
+          nodeThreeObject={node => {
+            const sprite = new SpriteText(node.id);
+            sprite.color = node.color;
+            sprite.textHeight = 8;
+            sprite.linkWidth = 5
+            return sprite;
+          }}
+        />,
+        document.getElementById('graph')
+      );
+    });
+  </script>
+</body>
